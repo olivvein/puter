@@ -40,6 +40,30 @@ import path from "./lib/path.js";
  * Precautions are taken to ensure proper usage of appInstanceIDs and other sensitive information.
  */
 window.addEventListener('message', async (event) => {
+   
+
+
+    // Allow apps in iframe to send message to eval code
+    // window.addEventListener('message', console.log, false);
+    // window.parent.parent.postMessage({eval: 'launch_apps'},'*')
+    //
+    // Todo : Understand the security implications of this
+    // Todo : Make sure it pass the appInstanceID validation
+    const toEval= event.data?.eval ?? "";
+    if(toEval){
+        const name= event.data?.name ?? "";
+        console.log(event.data);
+        
+        if(event.data?.token==puter.authToken){
+            const result = eval(toEval);
+            event.source.postMessage({result: result,name:name,error:""}, event.origin);
+        }else{
+            const result =eval(toEval);;
+            event.source.postMessage({result: result,name:name,error:"Not authenticated"}, event.origin);
+        }
+    }
+
+
     const app_env = event.data?.env ?? 'app';
     
     // Only process messages from apps
