@@ -47,6 +47,13 @@ async function UITaskbar(options){
 
     // init clock visibility
     window.change_clock_visible();
+    window.addEventListener('keydown', function(e) {
+        console.log(e.ctrlKey, e.key)
+        if (e.ctrlKey && e.key === 'g') {
+            // Exécutez la fonction onClick pour l'élément `Start`
+            $('#taskbar-item-2').click();
+        }
+    });
 
     //---------------------------------------------
     // add `Start` to taskbar
@@ -59,8 +66,15 @@ async function UITaskbar(options){
         disable_context_menu: true,
         onClick: async function(item){
             // skip if popover already open
-            if($(item).hasClass('has-open-popover'))
+            
+            if($(item).hasClass('has-open-popover')){
+                //close if launched with shortcut
+                $('.context-menu').remove();
+                $(".launch-popover").closest('.popover').fadeOut(200, function(){
+                    $(".launch-popover").closest('.popover').remove();
+                });  
                 return;
+            }
 
             // show popover
             let popover = UIPopover({
