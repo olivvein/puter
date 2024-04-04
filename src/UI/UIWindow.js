@@ -203,7 +203,8 @@ async function UIWindow(options) {
                 data-multiselectable = "${options.selectable_body}"
                 data-update_window_url = "${options.update_window_url}"
                 data-initial_zindex = "${zindex}"
-                style=" z-index: ${zindex}; 
+                style=" background-color:transparent;
+                        z-index: ${zindex}; 
                         ${options.width !== undefined ? 'width: ' + html_encode(options.width) +'; ':''}
                         ${options.height !== undefined ? 'height: ' + html_encode(options.height) +'; ':''}
                         ${options.border_radius !== undefined ? 'border-radius: ' + html_encode(options.border_radius) +'; ':''}
@@ -218,14 +219,14 @@ async function UIWindow(options) {
 
         // Head
         if(options.has_head){
-            h += `<div class="window-head">`;
-                // draggable handle which also contains icon and title
+            h += `<div class="window-head" style="background-color: rgba(255, 255, 255, 0.1) !important; backdrop-filter: blur(20px);color:black;">`;
+            // draggable handle which also contains icon and title
                 h+=`<div class="window-head-draggable">`;
                     // icon
                     if(options.icon)
                         h += `<img class="window-head-icon" />`;
                     // title
-                    h += `<span class="window-head-title" title="${html_encode(options.title)}"></span>`;
+                    h += `<span style="color:black;" class="window-head-title" title="${html_encode(options.title)}"></span>`;
                 h += `</div>`;
                 // Minimize button, only if window is resizable and not embedded
                 if(options.is_resizable && options.show_minimize_button && !is_embedded)
@@ -284,7 +285,7 @@ async function UIWindow(options) {
                 data-sort_order ="${options.sort_order ?? 'asc'}"
                 data-uid ="${options.uid}"
                 id="window-body-${win_id}" 
-                style="${!options.has_head ? ' height: 100%;' : ''}">`;
+                style="${!options.has_head ? ' height: 100%;' : ''} background-color:transparent;">`;
             // iframe, for apps
             if(options.iframe_url || options.iframe_srcdoc){
                 // iframe
@@ -295,6 +296,7 @@ async function UIWindow(options) {
                         frameborder="0" webkitallowfullscreen="webkitallowfullscreen" mozallowfullscreen="mozallowfullscreen"
                         ${options.iframe_url ? 'src="'+ html_encode(options.iframe_url)+'"' : ''}
                         ${options.iframe_srcdoc ? 'srcdoc="'+ html_encode(options.iframe_srcdoc) +'"' : ''}
+                        allowtransparency = "true"
                         allow = "accelerometer; camera; encrypted-media; gamepad; display-capture; geolocation; gyroscope; microphone; midi; clipboard-read; clipboard-write; web-share; fullscreen;"
                         sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation allow-downloads allow-presentation allow-storage-access-by-user-activation"></iframe>`;
             }

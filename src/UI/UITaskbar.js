@@ -41,14 +41,13 @@ async function UITaskbar(options){
     });
 
     let h = '';
-    h += `<div id="ui-taskbar_${global_element_id}" class="taskbar" style="height:${window.taskbar_height}px;"><span id='clock'></span></div>`;
+    h += `<div id="ui-taskbar_${global_element_id}" class="taskbar" style="backdrop-filter: blur(10px);background-color: rgba(255, 255, 255, 0.3) !important; height:${window.taskbar_height}px;"><span id='clock'></span></div>`;
 
     $('.desktop').append(h);
 
     // init clock visibility
     window.change_clock_visible();
     window.addEventListener('keydown', function(e) {
-        console.log(e.ctrlKey, e.key)
         if (e.ctrlKey && e.key === 'g') {
             // Exécutez la fonction onClick pour l'élément `Start`
             $('#taskbar-item-2').click();
