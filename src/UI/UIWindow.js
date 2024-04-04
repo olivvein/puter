@@ -55,6 +55,8 @@ async function UIWindow(options) {
 
     const default_window_top = ('calc(15% + ' + ((window.window_counter-1) % 10 * 20) + 'px)');
 
+    
+
     // list of file types that are allowed, other types will be disabled but still shown
     options.allowed_file_types = options.allowed_file_types ?? '';
     options.app = options.app ?? '';
@@ -216,9 +218,15 @@ async function UIWindow(options) {
             h += `<div class="busy-indicator">BUSY</div>`;
         h += `</div>`;
 
-
+        console.log(options);
+        let isWidget=false;
+        if(options.app=="Ales_Meteo"){
+            isWidget=true;
+        }
+        console.log("isWidget : ",isWidget);
         // Head
-        if(options.has_head){
+        if(options.has_head && !isWidget){ 
+            //normal window blur
             h += `<div class="window-head" style="background-color: rgba(255, 255, 255, 0.1) !important; backdrop-filter: blur(20px);color:black;">`;
             // draggable handle which also contains icon and title
                 h+=`<div class="window-head-draggable">`;
@@ -238,9 +246,29 @@ async function UIWindow(options) {
                 h += `<span class="window-action-btn window-close-btn"><img src="${html_encode(window.icons['close.svg'])}" draggable="false"></span>`;
             h += `</div>`;
         }
+        else{  
+            //widget mode
+            h += `<div class="window-head window-head-draggable" style="background-color:transparent;backdrop-filter: blur(0px);color:white;position:absolute;top:0px;width:100%;right:0px; z-index-99999">`;
+            // draggable handle which also contains icon and title
+                h+=`<div class="window-head-draggable">`;
+                    // icon
+                    if(options.icon)
+                        h += `<img class="window-head-icon" />`;
+                    // title
+                    //h += `<span style="color:black;" class="window-head-title" title="${html_encode(options.title)}"></span>`;
+                h += `</div>`;
+                // Minimize button, only if window is resizable and not embedded
+                if(options.is_resizable && options.show_minimize_button && !is_embedded)
+                    h += `<span class="window-action-btn window-minimize-btn" style="margin-left:0;filter: brightness(0) invert(1);"><img src="${html_encode(window.icons['minimize.svg'])}" draggable="false"></span>`;
+                // Maximize button
+                if(options.is_resizable && options.show_maximize_button)
+                    h += `<span class="window-action-btn window-scale-btn" style="filter: brightness(0) invert(1);"><img src="${html_encode(window.icons['scale.svg'])}" draggable="false"></span>`;                // Close button
+                h += `<span class="window-action-btn window-close-btn" style="filter: brightness(0) invert(1);"><img src="${html_encode(window.icons['close.svg'])}" draggable="false"></span>`;
+            h += `</div>`;
+        }
 
         // Sidebar
-        if(options.is_dir && !isMobile.phone){
+        if((options.is_dir && !isMobile.phone)){
             h += `<div class="window-sidebar disable-user-select hide-scrollbar"
                     style="${window.window_sidebar_width ? 'width: ' + html_encode(window.window_sidebar_width) + 'px !important;' : ''}"
                     draggable="false"
@@ -277,7 +305,7 @@ async function UIWindow(options) {
 
         // Body
         h += `<div 
-                class="window-body${options.is_dir ? ' item-container' : ''}${options.iframe_url !== undefined || options.iframe_srcdoc !== undefined ? ' window-body-app' : ''}${options.is_saveFileDialog || options.is_openFileDialog || options.is_directoryPicker ? ' window-body-filedialog' : ''}" 
+                class="window-head-draggable window-body${options.is_dir ? ' item-container' : ''}${options.iframe_url !== undefined || options.iframe_srcdoc !== undefined ? ' window-body-app' : ''}${options.is_saveFileDialog || options.is_openFileDialog || options.is_directoryPicker ? ' window-body-filedialog' : ''}" 
                 data-allowed_file_types="${html_encode(options.allowed_file_types)}"
                 data-path="${html_encode(options.path)}"
                 data-multiselectable = "${options.selectable_body}"
@@ -285,7 +313,7 @@ async function UIWindow(options) {
                 data-sort_order ="${options.sort_order ?? 'asc'}"
                 data-uid ="${options.uid}"
                 id="window-body-${win_id}" 
-                style="${!options.has_head ? ' height: 100%;' : ''} background-color:transparent;">`;
+                style="${!options.has_head ? ' height: 100%;' : ''} ${options.window_class!==' window-app'?"":"background-color:transparent;"} ">`;
             // iframe, for apps
             if(options.iframe_url || options.iframe_srcdoc){
                 // iframe
