@@ -219,7 +219,7 @@ class SQLES extends BaseES {
             console.log('SQL STMT', stmt);
             console.log('SQL VALS', execute_vals);
 
-            const res = await this.db.write(
+            const res = await db.write(
                 stmt, execute_vals
             );
 
